@@ -1,0 +1,7 @@
+First = int(input("Give me the first number: "))
+Second = int(input("Give me the second number: "))
+print("Thank you!")
+print(f"{First} + {Second} = {First + Second}")
+print(f"{First} - {Second} = {First - Second}")
+print(f"{First} / {Second} = {First // Second}")
+print(f"{First} * {Second} = {First * Second}")
