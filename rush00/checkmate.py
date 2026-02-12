@@ -40,7 +40,6 @@ def checkmate(board):
     class pieces:
         def __init__(self):
             self.addr = []
-            self.atk = []
 
     rook = pieces()
     bishop = pieces()
@@ -60,45 +59,66 @@ def checkmate(board):
                 queen.addr.append([r,c])
             elif cell == "K": 
                 king.addr.append([r,c])
-    #rook queen  
-    for r, row in enumerate(rows):
-        for c, cell in enumerate(row):
-            for r_rook, c_rook in rook.addr:
-                if r == r_rook or c == c_rook:
-                    rook.atk.append([r,c])
 
-            for r_queen, c_queen in queen.addr:
-                if r == r_queen or c == c_queen:
-                    queen.atk.append([r,c])
+    def inboard(r, c): # เช็คขอบ board
+        return 0 <= r < size and 0 <= c < size
+    
+    #rook
+    for r, c in rook.addr:
+        directions = [(1,0), (-1,0), (0,1), (0,-1)]
+        for dr, dc in directions:
+            nr = r + dr
+            nc = c + dc
+            while inboard(nr,nc):
+                if rows[nr][nc] == 'K': # เจอ King
+                    print("Success")
+                    return
+                if rows[nr][nc] != '.': # เจอหมากขวาง
+                    break
+                nr += dr
+                nc += dc
        
-    #bishop queen
-    for i in range(1,len(rows)+1):
-        for r, c in bishop.addr:
-            bishop.atk.append([r + i, c + i])
-            bishop.atk.append([r - i, c - i])
-            bishop.atk.append([r + i, c - i])
-            bishop.atk.append([r - i, c + i])
-        for r, c in queen.addr:
-            queen.atk.append([r + i, c + i])
-            queen.atk.append([r - i, c - i])
-            queen.atk.append([r + i, c - i])
-            queen.atk.append([r - i, c + i])
+    #bishop
+    for r, c in bishop.addr:
+        directions = [(1,1), (1,-1), (-1,1), (-1,-1)]
+        for dr, dc in directions:
+            nr = r + dr
+            nc = c + dc
+            while inboard(nr, nc):
+                if rows[nr][nc] == 'K':
+                    print("Success")
+                    return
+                if rows[nr][nc] != '.':
+                    break
+                nr += dr
+                nc += dc
+
+    #queen
+    for r, c in queen.addr:
+        directions = [(1,0), (-1,0), (0,1), (0,-1), (1,1), (1,-1), (-1,1), (-1,-1)]
+        for dr, dc in directions:
+            nr = r + dr
+            nc = c + dc
+            while inboard(nr, nc):
+                if rows[nr][nc] == 'K':
+                    print("Success")
+                    return
+                if rows[nr][nc] != '.':
+                    break
+                nr += dr
+                nc += dc
 
     #pawn
     for r, c in pawn.addr:
-        pawn.atk.append([r - 1, c - 1])
-        pawn.atk.append([r - 1, c + 1])
-    # print("PAWN",pawn.addr)
-    # print(pawn.atk)
-    # print("BISHOP",bishop.addr)
-    # print(bishop.atk)
-    # print("ROOK",rook.addr)
-    # print(rook.atk)
-    # print("QUEEN",queen.addr)
-    # print(queen.atk)
-    # print("KING",king.addr)
+        directions = [(-1,-1), (-1,1)]
+        for dr, dc in directions:
+            nr = r + dr
+            nc = c + dc
+            if inboard(nr, nc):
+                if rows[nr][nc] == 'K':
+                    print("Success")
+                    return
 
-    if king.addr[0] in pawn.atk or king.addr[0] in bishop.atk or king.addr[0] in rook.atk or king.addr[0] in queen.atk:
-        print("Success")
-        return
-    else: print("Fail")
+    print("Fail") # หลุดมาถึงตรงนี้ คือรอด
+    # while ใช้กับหมากพุ่งไกล
+    # if ใช้กินช่องเดียว
